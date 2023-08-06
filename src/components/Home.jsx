@@ -5,7 +5,8 @@ import VerificationModal from './VerificationModal';
 import { useContext } from 'react';
 import { useEffect } from 'react';
 import AuthContext from '../AuthContext';
-import { redirect } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
+
 
 const Home = () => {
   const variants = {
@@ -14,6 +15,8 @@ const Home = () => {
   };
   const { authenticated, login } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -26,16 +29,24 @@ const Home = () => {
   const handleVerificationSuccess = () => {
     // Implement your redirection logic here
     login();
-    console.log("logged in");
-    //redirect to Places page
-    redirect("/places");
+    navigate('/places');
+    
+
+    //insert a rose.png before the Hola Mi Amor text
 
   };
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col justify-center items-center margin">
         <div className="max-w-md mx-auto px-4 flex flex-col justify-center items-center">
+      <motion.img
+        src="src/assets/rose.png"
+        alt="Rose"
+        className="w-80 mb-8"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
+      />
       <motion.h1
-        className="text-4xl text-red-700 mb-4 font-semibold"
+        className="text-4xl text-red-500 mb-4 font-semibold"
         initial="hidden"
         animate="visible"
         variants={variants}
@@ -43,7 +54,7 @@ const Home = () => {
         Hola mi amor!
       </motion.h1>
       <motion.p
-        className="text-white text-lg mb-8"
+        className="text-white text-lg mb-8 text-center"
         initial="hidden"
         animate="visible"
         variants={variants}
