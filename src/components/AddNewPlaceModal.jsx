@@ -21,12 +21,19 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
     'Dine-in',
   ];
   const toggleCategory = (category) => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories(selectedCategories.filter((cat) => cat !== category));
-    } else {
-      setSelectedCategories([...selectedCategories, category]);
-    }
+    setSelectedCategories((prevCategories) => {
+      if (prevCategories.includes(category)) {
+        return prevCategories.filter((cat) => cat !== category);
+      } else {
+        return [...prevCategories, category];
+      }
+    });
   };
+  
+  useEffect(() => {
+    console.log("selectedCategories after:", selectedCategories);
+  }, [selectedCategories]);
+  
   
   
   const handleAddPlace = () => {
@@ -34,7 +41,7 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
       name,
       location,
       firstTime,
-      categories: selectedCategories,
+      selectedCategories,
       rating,
       reviews,
     };
@@ -42,9 +49,9 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
     setName('');
     setLocation('');
     setFirstTime('tried');
-    setSelectedCategories([]);
     setRating(0);
     setReviews('');
+    setSelectedCategories([]);
     onClose();
   }
   return (
@@ -83,7 +90,9 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
               className={`m-1 px-4 py-2 rounded-md ${
                 selectedCategories.includes(category) ? 'bg-blue-500 text-white' : 'bg-gray-800 text-white'
               }`}
-              onClick={() => toggleCategory(category)}
+              onClick={() => {
+                console.log("CLICKED on category",  category)
+                toggleCategory(category)}}
             >
               {category}
             </button>

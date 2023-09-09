@@ -3,13 +3,15 @@ import Navbar from './Navbar';
 import Place from './Place';
 import AddNewPlaceModal from './AddNewPlaceModal';
 
+const url = 'http://localhost:5000/api/places';
+
 const Places = () => {
   const [places, setPlaces] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   //fetch places when page loads from database
   useEffect(() => {
-    fetch('/api/places')
+    fetch('http://localhost:5000/api/places')
       .then((res) => res.json())
       .then((data) => {
         console.log("RESPONSE FROM DB", data);
@@ -25,6 +27,7 @@ const Places = () => {
   };
 
   const handleAddPlace = (newPlace) => {
+    console.log("newPlace", newPlace)
     // Add a new place to the list make the post call to the database
     fetch('http://127.0.0.1:5000/api/places', { 
       method: 'POST',
@@ -79,8 +82,7 @@ const Places = () => {
                   key={index}
                   name={place.name}
                   location={place.location}
-                  category={place.category}
-                  picture={place.picture}
+                  selectedCategories={place.selectedCategories}
                   rating={place.rating}
                   reviews={place.reviews}
                   onDelete={() => handleDeletePlace(index)}

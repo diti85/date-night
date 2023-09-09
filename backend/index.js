@@ -35,12 +35,12 @@ app.get('/api/places', async (req, res) => {
 });
 
 app.post('/api/places', async (req, res) => {
-  const { name, location, firstTime, category, rating, reviews } = req.body;
+  const { name, location, firstTime, selectedCategories, rating, reviews } = req.body;
   const newPlace = new Place({
     name,
     location,
     firstTime,
-    category,
+    selectedCategories,
     rating,
     reviews,
   });

@@ -7,7 +7,7 @@ const placeSchema = new Schema({
     name: String,
     location: String,
     firstTime: String,
-    categories: Array,
+    selectedCategories: Array,
     rating: Number,
     reviews: String,
 });    
