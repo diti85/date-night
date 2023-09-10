@@ -44,14 +44,22 @@ app.post('/api/places', async (req, res) => {
     rating,
     reviews,
   });
-
-  try {
-    const savedPlace = await newPlace.save(); // Save new place to database
-    res.status(201).json(savedPlace);
-  } catch (error) {
-    res.status(500).json({ error: 'Error adding place' });
-  }
 });
+
+app.post('/api/categories/add', async (req, res) => {
+  let collection = await db.collection("categories");
+  let category = req.body;
+  let result = await collection.insertOne(category);
+  res.send(result).status(201);
+}
+);
+
+app.get('/api/categories', async (req, res) => {
+  let collection = await db.collection("categories");
+  let result = await collection.find().toArray();
+  res.send(result).status(200);
+}
+);
 
 // Start the server
 app.listen(PORT, () => {

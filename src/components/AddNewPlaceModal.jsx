@@ -8,18 +8,47 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
   const [firstTime, setFirstTime] = useState('tried'); // Set a default value
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [rating, setRating] = useState(0);
-  const [reviews, setReviews] = useState('');
+  const [reviews, setReviews] = useState(''); 
+  const [availableCategories, setAvailableCategories] = useState([]);
+  const [isAddingCategory, setIsAddingCategory] = useState(false); // State for the new category modal
+  const [newCategoryName, setNewCategoryName] = useState('');
+  //change the statically typed categories and fetch them from the backend
+  useEffect(() => {
+    //fetch categories from backend
+    fetch('http://localhost:5000/api/categories/add')
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("RESPONSE FROM DB of AVAILABLE CATEGORIES", data);
+        setAvailableCategories(data);
+      }
+      )      
+      .catch((err) => console.log(err)
+      )
+      ;
+  }, []);
+  const handleAddCategory = () => {
+    if (newCategoryName.trim() === '') {
+      // Don't add an empty category
+      return;
+    }
+    else{
+      // Add a new category to the list and make a POST call to the database
+      fetch('http://localhost:5000/api/categories/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ category: newCategoryName }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("RESPONSE FROM DB", data);
+          setAvailableCategories([...availableCategories, data]);
+          setSelectedCategories([...selectedCategories, data]);
+        });
+    }
+  };
 
-  const availableCategories = [
-    'Italian',
-    'Asian',
-    'American',
-    'Hispanic',
-    'Other',
-    'Open late',
-    'Take-out',
-    'Dine-in',
-  ];
   const toggleCategory = (category) => {
     setSelectedCategories((prevCategories) => {
       if (prevCategories.includes(category)) {
@@ -90,14 +119,39 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
               className={`m-1 px-4 py-2 rounded-md ${
                 selectedCategories.includes(category) ? 'bg-blue-500 text-white' : 'bg-gray-800 text-white'
               }`}
-              onClick={() => {
-                console.log("CLICKED on category",  category)
-                toggleCategory(category)}}
+              onClick={() => toggleCategory(category)}
             >
-              {category}
+              {category.category}
             </button>
           ))}
-        </div>  
+          {/* Button to add a new category */}
+          <button
+            onClick={() => setIsAddingCategory(true)}
+            className="m-1 px-4 py-2 rounded-md bg-green-500 text-white"
+          >
+            + Add Category
+          </button>
+        </div>
+        
+        {/* Modal for adding a new category */}
+        {isAddingCategory && (
+          <div className="bg-white p-4 rounded-lg shadow-lg mb-4">
+            <h2 className="text-xl font-semibold text-center mb-2">Add a New Category</h2>
+            <input
+              type="text"
+              placeholder="Category Name"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="w-full p-2 border rounded-md mb-4 bg-gray-200 text-black text-center"
+            />
+            <button
+              onClick={handleAddCategory}
+              className="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
+            >
+              Add Category
+            </button>
+          </div>
+        )}
         <Box sx={{ display: 'flex', justifyContent: 'center' , alignContent:'center', alignItems:'center',flexDirection: 'row', p: 1, m: 1 }}>
         <FormControl component="fieldset" className="text-white text-center text-2xl">
         <FormLabel component="legend">
@@ -141,7 +195,7 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
         >
           Add Place
         </button>
-      </div>
+        </div>
     </Modal>
   );
 };
