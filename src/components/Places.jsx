@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import Place from './Place';
 import AddNewPlaceModal from './AddNewPlaceModal';
-
-const url = 'http://localhost:5000/api/places';
-
 const Places = () => {
   const [places, setPlaces] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,7 +9,7 @@ const Places = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   //fetch places when page loads from database
   useEffect(() => {
-    fetch('http://localhost:5000/api/places')
+    fetch(import.meta.env.BASE_URL + 'api/places')
       .then((res) => res.json())
       .then((data) => {
         console.log("RESPONSE FROM DB", data);
@@ -32,7 +29,7 @@ const Places = () => {
     console.log("newPlace", newPlace);
 
     // Add a new place to the list and make a POST call to the database
-    fetch('http://127.0.0.1:5000/api/places', { 
+    fetch(import.meta.env.API_URL +'api/places', { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

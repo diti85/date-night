@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const Place = require('./models/places');
+//dotenv
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,7 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://diti85:Dpghma2020@datenight.owmiral.mongodb.net/?retryWrites=true&w=majority', {
+mongoose.connect(process.env.MONGODB_URL , {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

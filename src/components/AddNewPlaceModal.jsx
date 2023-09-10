@@ -15,7 +15,7 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
   //change the statically typed categories and fetch them from the backend
   useEffect(() => {
     //fetch categories from backend
-    fetch('http://localhost:5000/api/categories/add')
+    fetch(import.meta.env.VITE_API_URL + 'api/categories/')
       .then((res) => res.json())
       .then((data) => {
         console.log("RESPONSE FROM DB of AVAILABLE CATEGORIES", data);
@@ -33,7 +33,7 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
     }
     else{
       // Add a new category to the list and make a POST call to the database
-      fetch('http://localhost:5000/api/categories/add', {
+      fetch(import.meta.env.VITE_API_URL + 'api/categories/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
