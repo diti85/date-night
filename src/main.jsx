@@ -9,6 +9,10 @@ import {
   RouterProvider,
 } from 'react-router-dom'
 import Home from './components/Home.jsx'
+import Modal from 'react-modal';
+
+// Define the root element that should be hidden from screen readers
+Modal.setAppElement('#root'); 
 
 
 const router = createBrowserRouter(
