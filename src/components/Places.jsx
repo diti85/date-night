@@ -2,19 +2,24 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import Place from './Place';
 import AddNewPlaceModal from './AddNewPlaceModal';
+import PlaceModal from './PlaceModal';
 const Places = () => {
   const [places, setPlaces] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filteredPlaces, setFilteredPlaces] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [isPlaceModalOpen, setIsPlaceModalOpen] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState(null);
   //fetch places when page loads from database
   useEffect(() => {
-    fetch(import.meta.env.BASE_URL + 'api/places')
+    fetch(import.meta.env.VITE_API_URL + 'api/places')
       .then((res) => res.json())
       .then((data) => {
         console.log("RESPONSE FROM DB", data);
         setPlaces(data);
         setFilteredPlaces(data);
+        const categories = [...new Set(places.map((place) => place.category))];
       });
   }, []);
 
@@ -44,18 +49,59 @@ const Places = () => {
       });
   };
 
+  const handleUpdatePlace = (updatedPlace) => {
+    // Update the place in the list and make a PUT call to the database
+    fetch(import.meta.env.API_URL + 'api/places/' + updatedPlace.id, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedPlace),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const updatedPlaces = places.map((place) => {
+          if (place.id === data.id) {
+            return data;
+          } else {
+            return place;
+          }
+        });
+        setPlaces(updatedPlaces);
+        setFilteredPlaces(updatedPlaces);
+      });
+  };
+
+
+
+  // Function to open the PlaceModal with the selected place data
+  const openPlaceModal = (placeData) => {
+    setSelectedPlace(placeData);
+    console.log("placeData", placeData);
+    setIsPlaceModalOpen(true);
+  };
+
+  // Function to close the PlaceModal
+  const closePlaceModal = () => {
+    setIsPlaceModalOpen(false);
+    setSelectedPlace(null);
+  };
+
+
+
   const handleDeletePlace = (index) => {
     const updatedPlaces = places.filter((place, i) => i !== index);
     setPlaces(updatedPlaces);
     setFilteredPlaces(updatedPlaces);
   };
+  
   const handleCategoryFilter = (category) => {
     // Filter places by selected category
     if (category === 'All') {
       setFilteredPlaces(places);
     } else {
       const filtered = places.filter((place) =>
-        place.selectedCategories.includes(category)
+        place.category === category
       );
       setFilteredPlaces(filtered);
     }
@@ -90,30 +136,31 @@ const Places = () => {
             onClose={handleModalClose}
             onSuccess={handleAddPlace}
           />
-          <div className="flex mb-4">
-            <button
-              onClick={() => handleCategoryFilter('All')}
-              className={`${
-                selectedCategories.includes('All')
-                  ? 'bg-red-500 text-white'
-                  : 'bg-gray-700 text-gray-300'
-              } py-1 px-4 rounded-full text-lg mr-4`}
-            >
-              All
-            </button>
-            {/* Replace with your logic to display available categories */}
-            {/* Example:
-            <button
-              onClick={() => handleCategoryFilter('Category1')}
-              className={`${
-                selectedCategories.includes('Category1')
-                  ? 'bg-red-500 text-white'
-                  : 'bg-gray-700 text-gray-300'
-              } py-1 px-4 rounded-full text-lg mr-4`}
-            >
-              Category1
-            </button>
-            */}
+     <div className="flex mb-4">
+        <button
+          onClick={() => handleCategoryFilter('All')}
+          className={`${
+            selectedCategories.includes('All')
+              ? 'bg-red-500 text-white'
+              : 'bg-gray-700 text-gray-300'
+          } py-1 px-4 rounded-full text-lg mr-4`}
+        >
+          All
+        </button>
+        {/* Display buttons for each unique category */}
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => handleCategoryFilter(category)}
+            className={`${
+              selectedCategories.includes(category)
+                ? 'bg-red-500 text-white'
+                : 'bg-gray-700 text-gray-300'
+            } py-1 px-4 rounded-full text-lg mr-4`}
+          >
+            {category}
+          </button>
+        ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredPlaces.map((place, index) => (
@@ -125,8 +172,20 @@ const Places = () => {
                 rating={place.rating}
                 reviews={place.reviews}
                 onDelete={() => handleDeletePlace(index)}
+                onClick = {() => openPlaceModal(place)}
               />
             ))}
+      <div className="flex flex-col items-center  justify-center p-8">
+      {selectedPlace && (
+        <PlaceModal
+          isOpen={isPlaceModalOpen}
+          onClose={closePlaceModal}
+          placeData={selectedPlace}
+          availableCategories={categories}
+          onUpdatePlace={handleUpdatePlace}
+        />
+      )}
+      </div>
           </div>
         </div>
       </div>

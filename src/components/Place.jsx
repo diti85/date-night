@@ -1,35 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 
-const Place = ({ name, location, selectedCategories, rating, reviews }) => {
+const Place = ({ name, location, selectedCategories, rating, reviews, onClick }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  // const handleClick = () => {
+  //   // Add your click functionality here
+  //   console.log('Place Card clicked');
+  // };
+
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-lg mb-4">
+    <div
+      className={`bg-gray-800 p-4 rounded-lg shadow-lg mb-4 ${isHovered ? 'hover:shadow-xl cursor-pointer' : ''}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+    >
       <h2 className="text-xl font-semibold text-white mb-2">{name}</h2>
       <p className="text-gray-400 mb-2">{location}</p>
       <p className="text-gray-400 mb-2">Categories: {selectedCategories.join(', ')}</p>
       <div className="flex items-center mb-2">
-        <span className="text-yellow-400 mr-2">
-          {/* Display a star icon or a rating value */}
-          {Array.from({ length: 5 }).map((_, index) => (
-            <svg
-              key={index}
-              xmlns="http://www.w3.org/2000/svg"
-              className={`h-4 w-4 ${
-                index < rating ? 'text-yellow-400' : 'text-gray-400'
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-          ))}
-        </span>
-        <p className="text-yellow-400 font-semibold">{rating.toFixed(1)}</p>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <FontAwesomeIcon
+            key={index}
+            icon={faStar}
+            className={`h-4 w-4 ${index < rating ? 'text-yellow-400' : 'text-gray-400'}`}
+          />
+        ))}
+        <p className="text-yellow-400 font-semibold ml-2">{rating.toFixed(1)}</p>
       </div>
       <p className="text-gray-400">{reviews}</p>
     </div>

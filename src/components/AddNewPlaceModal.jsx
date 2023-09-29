@@ -93,7 +93,7 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
       <div className="backdrop-blur-sm bg-white/20 rounded-lg p-2 md:p-8 shadow-lg relative w-[90%] sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%]">
         <button
           onClick={onClose}
-          className="absolute font-semibold top-2 right-5 text-red-700 hover:text-gray-700"
+          className="absolute font-bold top-2 right-5 text-red-500 hover:text-gray-700"
         >
           Close
         </button>
