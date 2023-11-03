@@ -4,23 +4,28 @@ import Place from './Place';
 import AddNewPlaceModal from './AddNewPlaceModal';
 import PlaceModal from './PlaceModal';
 const Places = () => {
+  //this variable holds the places that get loaded on page load
   const [places, setPlaces] = useState([]);
+  //varialbe that checks if modal is open or not
   const [isModalOpen, setIsModalOpen] = useState(false);
+  //variable that holds the filtered places
   const [filteredPlaces, setFilteredPlaces] = useState([]);
+  //variable that holds the selected categories
   const [selectedCategories, setSelectedCategories] = useState([]);
+  //variable that holds the categories 
   const [categories, setCategories] = useState([]);
+  //variable that checks if place modal is open or not
   const [isPlaceModalOpen, setIsPlaceModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
   //fetch places when page loads from database
   useEffect(() => {
-    fetch(import.meta.env.VITE_API_URL + 'api/places')
+    fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places')
       .then((res) => res.json())
       .then((data) => {
         console.log("RESPONSE FROM DB", data);
         setPlaces(data);
         setFilteredPlaces(data);
-        const categories = [...new Set(places.map((place) => place.category))];
-      });
+      });   
   }, []);
 
   const handleModalOpen = () => {
@@ -34,7 +39,7 @@ const Places = () => {
     console.log("newPlace", newPlace);
 
     // Add a new place to the list and make a POST call to the database
-    fetch(import.meta.env.API_URL +'api/places', { 
+    fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places', { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -51,7 +56,7 @@ const Places = () => {
 
   const handleUpdatePlace = (updatedPlace) => {
     // Update the place in the list and make a PUT call to the database
-    fetch(import.meta.env.API_URL + 'api/places/' + updatedPlace.id, {
+    fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places/' + updatedPlace.id, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -116,6 +121,7 @@ const Places = () => {
       acc[place.category].push(place);
       return acc;
     }, {});
+    
     return (
       <div>
         <Navbar />

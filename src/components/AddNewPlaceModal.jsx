@@ -23,7 +23,7 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
 
   useEffect(() => {
     // Fetch categories from the backend
-    fetch(import.meta.env.VITE_API_URL + 'api/categories/')
+    fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/categories/')
       .then((res) => res.json())
       .then((data) => {
         console.log(data)
@@ -37,7 +37,7 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
       return; // Don't add an empty category
     } else {
       // Add a new category to the list and make a POST call to the database
-      fetch(import.meta.env.VITE_API_URL + 'api/categories/add', {
+      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/categories/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

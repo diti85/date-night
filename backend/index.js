@@ -37,7 +37,9 @@ app.get('/api/places', async (req, res) => {
 });
 
 app.post('/api/places', async (req, res) => {
-  const { name, location, firstTime, selectedCategories, rating, reviews } = req.body;
+  const data = req.body;
+  console.log(data)
+  const { name, location, firstTime, selectedCategories, rating, reviews } = data;
   const newPlace = new Place({
     name,
     location,
@@ -46,6 +48,14 @@ app.post('/api/places', async (req, res) => {
     rating,
     reviews,
   });
+  console.log(newPlace);  
+  try {
+    const savedPlace = await newPlace.save();
+    res.json(savedPlace);
+  }
+  catch (error) {
+    res.status(500).json({ error: 'Error creating place' });
+  }
 });
 
 app.post('/api/categories/add', async (req, res) => {
