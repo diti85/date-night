@@ -20,7 +20,7 @@ const Places = () => {
   const [availableCategories, setAvailableCategories] = useState([]);
 
   useEffect(() => {
-    fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places')
+    fetch(import.meta.env.VITE_API_URL + 'api/places')
       .then((res) => res.json())
       .then((data) => {
         console.log("RESPONSE FROM DB", data);
@@ -51,7 +51,7 @@ const Places = () => {
         setCategories(allCategories);
       });
 
-      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/categories/')
+      fetch(import.meta.env.VITE_API_URL + 'api/categories/')
       .then((res) => res.json())
       .then((data) => {
         console.log(data)
@@ -72,7 +72,7 @@ const Places = () => {
       console.log("newPlace", newPlace);
 
       // Add a new place to the list and make a POST call to the database
-      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places', { 
+      fetch(import.meta.env.VITE_API_URL  + 'api/places', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const Places = () => {
 
     const handleUpdatePlace = (updatedPlace) => {
       // Update the place in the list and make a PUT call to the database
-      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places/' + updatedPlace._id, {
+      fetch(import.meta.env.VITE_API_URL + 'api/places/' + updatedPlace._id, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ const Places = () => {
     const handleDeletePlace = (place) => {
       // Make API call to delete the place
       // console.log("PLACE DATA: ", place)
-      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + `api/places/${place._id}`, {
+      fetch(import.meta.env.VITE_API_URL  + `api/places/${place._id}`, {
         method: 'DELETE',
       })
         .then((res) => res.json())
