@@ -58,6 +58,16 @@ app.post('/api/places', async (req, res) => {
   }
 });
 
+app.delete('/api/places/:id', async (req, res) => {
+  try {
+    console.log("delete place")
+    const deletedPlace = await Place.findByIdAndDelete(req.params.id);
+    res.json(deletedPlace);
+  } catch (error) {
+    res.status(500).json({ error: 'Error deleting place' });
+  }
+});
+
 app.post('/api/categories/add', async (req, res) => {
   let collection = await db.collection("categories");
   let category = req.body;

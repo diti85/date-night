@@ -113,13 +113,26 @@ const Places = () => {
       setIsPlaceModalOpen(false);
       setSelectedPlace(null);
     };
-
-    const handleDeletePlace = (index) => {
-      const updatedPlaces = places.filter((place, i) => i !== index);
-      setPlaces(updatedPlaces);
-      setFilteredPlaces(updatedPlaces);
+    const handleDeletePlace = (place) => {
+      // Make API call to delete the place
+      // console.log("PLACE DATA: ", place)
+      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + `api/places/${place._id}`, {
+        method: 'DELETE',
+      })
+        .then((res) => res.json())
+        .then(() => {
+          // Remove the deleted place from the state
+          const updatedPlaces = places.filter((p) => p.id !== place.id);
+          setPlaces(updatedPlaces);
+          setFilteredPlaces(updatedPlaces);
+          // Close the PlaceModal after deletion
+          closePlaceModal();
+        })
+        .catch((error) => {
+          console.error('Error deleting place:', error);
+          // You might want to handle errors here, e.g., show a notification to the user
+        });
     };
-    
     const handleCategoryFilter = (category) => {
       // Filter places by selected category
       if (category === 'All') {
