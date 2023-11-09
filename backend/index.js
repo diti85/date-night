@@ -68,6 +68,35 @@ app.delete('/api/places/:id', async (req, res) => {
   }
 });
 
+app.put('/api/places/:id', async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
+
+  try {
+    // Find the place by ID
+    const placeToUpdate = await Place.findById(id);
+
+    if (!placeToUpdate) {
+      return res.status(404).json({ error: 'Place not found' });
+    }
+
+    // Update the place fields with the new data
+    placeToUpdate.name = updatedData.name || placeToUpdate.name;
+    placeToUpdate.location = updatedData.location || placeToUpdate.location;
+    placeToUpdate.firstTime = updatedData.firstTime || placeToUpdate.firstTime;
+    placeToUpdate.selectedCategories = updatedData.selectedCategories || placeToUpdate.selectedCategories;
+    placeToUpdate.rating = updatedData.rating || placeToUpdate.rating;
+    placeToUpdate.reviews = updatedData.reviews || placeToUpdate.reviews;
+
+    // Save the updated place
+    const updatedPlace = await placeToUpdate.save();
+
+    res.json(updatedPlace);
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating place' });
+  }
+});
+
 app.post('/api/categories/add', async (req, res) => {
   let collection = await db.collection("categories");
   let category = req.body;

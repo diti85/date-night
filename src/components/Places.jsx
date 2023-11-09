@@ -17,6 +17,7 @@ const Places = () => {
   //variable that checks if place modal is open or not
   const [isPlaceModalOpen, setIsPlaceModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
+  const [availableCategories, setAvailableCategories] = useState([]);
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places')
@@ -49,6 +50,14 @@ const Places = () => {
         );
         setCategories(allCategories);
       });
+
+      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/categories/')
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+        setAvailableCategories(data);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
 
@@ -80,7 +89,7 @@ const Places = () => {
 
     const handleUpdatePlace = (updatedPlace) => {
       // Update the place in the list and make a PUT call to the database
-      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places/' + updatedPlace.id, {
+      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places/' + updatedPlace._id, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -219,7 +228,7 @@ const Places = () => {
               isOpen={isPlaceModalOpen}
               onClose={closePlaceModal}
               placeData={selectedPlace}
-              availableCategories={categories}
+              availableCategories={availableCategories}
               onUpdatePlace={handleUpdatePlace}
               onDeletePlace={handleDeletePlace}
             />
