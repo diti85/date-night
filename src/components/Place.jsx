@@ -27,7 +27,9 @@ const Place = ({ name, location, selectedCategories, rating, reviews, onClick })
     >
       <h2 className="text-xl font-semibold text-white mb-2">{name}</h2>
       <p className="text-gray-400 mb-2">{location}</p>
-      <p className="text-gray-400 mb-2">Categories: {selectedCategories.join(', ')}</p>
+      <p className="text-gray-400 mb-2">
+        Categories: {selectedCategories.map((category) => category.category).join(', ')}
+      </p>
       <div className="flex items-center mb-2">
         {Array.from({ length: 5 }).map((_, index) => (
           <FontAwesomeIcon

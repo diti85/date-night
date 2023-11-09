@@ -17,102 +17,122 @@ const Places = () => {
   //variable that checks if place modal is open or not
   const [isPlaceModalOpen, setIsPlaceModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
-  //fetch places when page loads from database
+
   useEffect(() => {
     fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places')
       .then((res) => res.json())
       .then((data) => {
         console.log("RESPONSE FROM DB", data);
-        setPlaces(data);
-        setFilteredPlaces(data);
-      });   
+
+        // Ensure that selectedCategories is always an array
+        const placesWithArrayCategories = data.map((place) => ({
+          ...place,
+          selectedCategories: Array.isArray(place.selectedCategories)
+            ? place.selectedCategories
+            : [place.selectedCategories],
+        }));
+
+        setPlaces(placesWithArrayCategories);
+        setFilteredPlaces(placesWithArrayCategories);
+
+        // Extract unique categories
+        const allCategories = placesWithArrayCategories.reduce(
+          (acc, place) => {
+            place.selectedCategories.forEach((category) => {
+              if (!acc.includes(category)) {
+                acc.push(category);
+              }
+            });
+            return acc;
+          },
+          []
+        );
+        setCategories(allCategories);
+      });
   }, []);
 
-  const handleModalOpen = () => {
-    setIsModalOpen(true);
-  };
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
 
-  const handleAddPlace = (newPlace) => {
-    console.log("newPlace", newPlace);
+    const handleModalOpen = () => {
+      setIsModalOpen(true);
+    };
+    const handleModalClose = () => {
+      setIsModalOpen(false);
+    };
 
-    // Add a new place to the list and make a POST call to the database
-    fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places', { 
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newPlace),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("RESPONSE FROM DB", data);
-        setPlaces([...places, data]);
-        setFilteredPlaces([...filteredPlaces, data]);
-      });
-  };
+    const handleAddPlace = (newPlace) => {
+      console.log("newPlace", newPlace);
 
-  const handleUpdatePlace = (updatedPlace) => {
-    // Update the place in the list and make a PUT call to the database
-    fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places/' + updatedPlace.id, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedPlace),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const updatedPlaces = places.map((place) => {
-          if (place.id === data.id) {
-            return data;
-          } else {
-            return place;
-          }
+      // Add a new place to the list and make a POST call to the database
+      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPlace),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("RESPONSE FROM DB", data);
+          setPlaces([...places, data]);
+          setFilteredPlaces([...filteredPlaces, data]);
         });
-        setPlaces(updatedPlaces);
-        setFilteredPlaces(updatedPlaces);
-      });
-  };
+    };
 
+    const handleUpdatePlace = (updatedPlace) => {
+      // Update the place in the list and make a PUT call to the database
+      fetch(import.meta.env.VITE_API_URL + import.meta.env.VITE_PORT + 'api/places/' + updatedPlace.id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedPlace),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          const updatedPlaces = places.map((place) => {
+            if (place.id === data.id) {
+              return data;
+            } else {
+              return place;
+            }
+          });
+          setPlaces(updatedPlaces);
+          setFilteredPlaces(updatedPlaces);
+        });
+    };
 
+    // Function to open the PlaceModal with the selected place data
+    const openPlaceModal = (placeData) => {
+      setSelectedPlace(placeData);
+      console.log("placeData", placeData);
+      setIsPlaceModalOpen(true);
+    };
 
-  // Function to open the PlaceModal with the selected place data
-  const openPlaceModal = (placeData) => {
-    setSelectedPlace(placeData);
-    console.log("placeData", placeData);
-    setIsPlaceModalOpen(true);
-  };
+    // Function to close the PlaceModal
+    const closePlaceModal = () => {
+      setIsPlaceModalOpen(false);
+      setSelectedPlace(null);
+    };
 
-  // Function to close the PlaceModal
-  const closePlaceModal = () => {
-    setIsPlaceModalOpen(false);
-    setSelectedPlace(null);
-  };
-
-
-
-  const handleDeletePlace = (index) => {
-    const updatedPlaces = places.filter((place, i) => i !== index);
-    setPlaces(updatedPlaces);
-    setFilteredPlaces(updatedPlaces);
-  };
-  
-  const handleCategoryFilter = (category) => {
-    // Filter places by selected category
-    if (category === 'All') {
-      setFilteredPlaces(places);
-    } else {
-      const filtered = places.filter((place) =>
-        place.category === category
-      );
-      setFilteredPlaces(filtered);
-    }
-    setSelectedCategories([category]);
-  };
-
+    const handleDeletePlace = (index) => {
+      const updatedPlaces = places.filter((place, i) => i !== index);
+      setPlaces(updatedPlaces);
+      setFilteredPlaces(updatedPlaces);
+    };
+    
+    const handleCategoryFilter = (category) => {
+      // Filter places by selected category
+      if (category === 'All') {
+        setFilteredPlaces(places);
+      } else {
+        const filtered = places.filter((place) =>
+          place.selectedCategories.some((selectedCategory) => selectedCategory.category === category)
+        );
+        setFilteredPlaces(filtered);
+      }
+      setSelectedCategories([category]);
+    };
+    
     // Group places by category
     const categorizedPlaces = places.reduce((acc, place) => {
       if (!acc[place.category]) {
@@ -121,11 +141,10 @@ const Places = () => {
       acc[place.category].push(place);
       return acc;
     }, {});
-    
     return (
       <div>
         <Navbar />
-        <div className="bg-gray-900 min-h-screen flex flex-col justify-center items-center p-8">
+        <div className="bg-gray-900 min-h-screen flex flex-col justify-center items-center ">
           <div className="flex flex-col items-center">
             <h1 className="text-4xl text-red-500 font-semibold mb-4">
               Our Favorite Places
@@ -142,31 +161,31 @@ const Places = () => {
             onClose={handleModalClose}
             onSuccess={handleAddPlace}
           />
-     <div className="flex mb-4">
-        <button
-          onClick={() => handleCategoryFilter('All')}
-          className={`${
-            selectedCategories.includes('All')
-              ? 'bg-red-500 text-white'
-              : 'bg-gray-700 text-gray-300'
-          } py-1 px-4 rounded-full text-lg mr-4`}
-        >
-          All
-        </button>
-        {/* Display buttons for each unique category */}
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => handleCategoryFilter(category)}
-            className={`${
-              selectedCategories.includes(category)
-                ? 'bg-red-500 text-white'
-                : 'bg-gray-700 text-gray-300'
-            } py-1 px-4 rounded-full text-lg mr-4`}
-          >
-            {category}
-          </button>
-        ))}
+          <div className="flex mb-4">
+            <button
+              onClick={() => handleCategoryFilter('All')}
+              className={`${
+                selectedCategories.includes('All')
+                  ? 'bg-red-500 text-white'
+                  : 'bg-gray-700 text-gray-300'
+              } py-1 px-4 rounded-full text-lg mr-4`}
+            >
+              All
+            </button>
+            {/* Display buttons for each unique category */}
+            {categories.map((category) => (
+              <button
+                key={category._id}
+                onClick={() => handleCategoryFilter(category.category)}
+                className={`${
+                  selectedCategories.includes(category.category)
+                    ? 'bg-red-500 text-white'
+                    : 'bg-gray-700 text-gray-300'
+                } py-1 px-4 rounded-full text-lg mr-4`}
+              >
+                {category.category}
+              </button>
+            ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredPlaces.map((place, index) => (
@@ -178,23 +197,24 @@ const Places = () => {
                 rating={place.rating}
                 reviews={place.reviews}
                 onDelete={() => handleDeletePlace(index)}
-                onClick = {() => openPlaceModal(place)}
+                onClick={() => openPlaceModal(place)}
               />
             ))}
-      <div className="flex flex-col items-center  justify-center p-8">
-      {selectedPlace && (
-        <PlaceModal
-          isOpen={isPlaceModalOpen}
-          onClose={closePlaceModal}
-          placeData={selectedPlace}
-          availableCategories={categories}
-          onUpdatePlace={handleUpdatePlace}
-        />
-      )}
-      </div>
           </div>
+          {selectedPlace && (
+            <PlaceModal
+              isOpen={isPlaceModalOpen}
+              onClose={closePlaceModal}
+              placeData={selectedPlace}
+              availableCategories={categories}
+              onUpdatePlace={handleUpdatePlace}
+              onDeletePlace={handleDeletePlace}
+            />
+          )}
         </div>
       </div>
     );
   };
-export default Places;
+  
+
+  export default Places;

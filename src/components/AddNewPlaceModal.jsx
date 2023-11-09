@@ -87,8 +87,8 @@ const AddNewPlaceModal = ({ isOpen, onClose, onSuccess }) => {
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      className="relative inset-0 flex items-center justify-center"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+      className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center w-screen"
+      overlayClassName="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center w-screen bg-gray-800 bg-opacity-50"  
     >
       <div className="backdrop-blur-sm bg-white/20 rounded-lg p-2 md:p-8 shadow-lg relative w-[90%] sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%]">
         <button

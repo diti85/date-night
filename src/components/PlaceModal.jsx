@@ -12,60 +12,54 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 
-
 const PlaceModal = ({
   isOpen,
   onClose,
   placeData,
   availableCategories,
   onUpdatePlace,
+  onDeletePlace,
 }) => {
-  const [name, setName] = useState(placeData.name);
-  const [location, setLocation] = useState(placeData.location);
-  const [firstTime, setFirstTime] = useState(placeData.firstTime);
-  const [selectedCategories, setSelectedCategories] = useState(
-    placeData.selectedCategories
-  );
-  const [rating, setRating] = useState(placeData.rating);
-  const [reviews, setReviews] = useState(placeData.reviews);
-  const [isEditing, setIsEditing] = useState(true);
+  const [editedPlace, setEditedPlace] = useState({ ...placeData });
+  const [isEditing, setIsEditing] = useState(false);
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);
   };
 
   const handleUpdatePlace = () => {
-    const updatedPlace = {
-      ...placeData,
-      name,
-      location,
-      firstTime,
-      selectedCategories,
-      rating,
-      reviews,
-    };
-    onUpdatePlace(updatedPlace);
+    onUpdatePlace(editedPlace);
     toggleEditing();
   };
 
+  const handleDeletePlace = () => {
+    onDeletePlace(placeData); // Pass the original placeData for deletion
+    onClose(); // Close the modal after deletion
+  };
+
   useEffect(() => {
-    console.log("Place data from placemodal", placeData)
-    setName(placeData.name);
-    setLocation(placeData.location);
-    setFirstTime(placeData.firstTime);
-    setSelectedCategories(placeData.selectedCategories);
-    setRating(placeData.rating);
-    setReviews(placeData.reviews);
-    //consolelog all variables
-    console.log("name", name, "location", location, "firstTime", firstTime, "selectedCategories", selectedCategories, "rating", rating, "reviews", reviews)
+    setEditedPlace({ ...placeData });
   }, [placeData]);
+
+  const handleInputChange = (field, value) => {
+    setEditedPlace((prevPlace) => ({ ...prevPlace, [field]: value }));
+  };
+
+  const toggleCategory = (categoryId) => {
+    const isSelected = editedPlace.selectedCategories.includes(categoryId);
+    const updatedCategories = isSelected
+      ? editedPlace.selectedCategories.filter((id) => id !== categoryId)
+      : [...editedPlace.selectedCategories, categoryId];
+
+    handleInputChange('selectedCategories', updatedCategories);
+  };
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      className="relative inset-0 flex items-center justify-center"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+      className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center w-screen"
+      overlayClassName="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center w-screen bg-gray-800 bg-opacity-50"
     >
       <div className="backdrop-blur-sm bg-white/20 rounded-lg p-2 md:p-8 shadow-lg relative w-[90%] sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%]">
         <button
@@ -74,7 +68,12 @@ const PlaceModal = ({
         >
           Close
         </button>
-        <h2 className="text-2xl font-semibold text-center mb-4 text-white">
+        <h2
+          onClick={!isEditing ? toggleEditing : undefined}
+          className={`text-2xl font-semibold text-center mb-4 text-white cursor-pointer ${
+            isEditing ? 'border-b-2 border-blue-500' : ''
+          }`}
+        >
           {isEditing ? (
             <div>
               <label htmlFor="placeName" className="block text-gray-400 mb-1">
@@ -84,16 +83,21 @@ const PlaceModal = ({
                 type="text"
                 id="placeName"
                 placeholder="Place Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={editedPlace.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
                 className="w-full p-2 border rounded-md mb-4 bg-gray-800 text-white text-center"
               />
             </div>
           ) : (
-            name
+            editedPlace.name
           )}
         </h2>
-        <p className="text-gray-400 mb-2">
+        <p
+          onClick={!isEditing ? toggleEditing : undefined}
+          className={`text-gray-400 mb-2 cursor-pointer ${
+            isEditing ? 'border-b-2 border-blue-500' : ''
+          }`}
+        >
           {isEditing ? (
             <div>
               <label htmlFor="location" className="block text-gray-400 mb-1">
@@ -103,76 +107,99 @@ const PlaceModal = ({
                 type="text"
                 id="location"
                 placeholder="Location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                value={editedPlace.location}
+                onChange={(e) => handleInputChange('location', e.target.value)}
                 className="w-full p-2 border rounded-md mb-4 bg-gray-800 text-white text-center"
               />
             </div>
           ) : (
-            location
+            editedPlace.location
           )}
         </p>
-        <div className="flex items-center mb-2">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <FontAwesomeIcon
-              key={index}
-              icon={faStar}
-              className={`h-4 w-4 ${
-                index < rating ? 'text-yellow-400' : 'text-gray-400'
-              }`}
+        <div
+          onClick={!isEditing ? toggleEditing : undefined}
+          className={`flex items-center mb-2 cursor-pointer ${
+            isEditing ? 'border-b-2 border-blue-500' : ''
+          }`}
+        >
+          {isEditing ? (
+            <Rating
+              name="rating-edit"
+              value={editedPlace.rating}
+              classes={{ iconFilled: 'text-yellow-400' }}
+              onChange={(e, newValue) =>
+                handleInputChange('rating', newValue)
+              }
+              precision={0.5}
             />
-          ))}
-          <p className="text-yellow-400 font-semibold ml-2">
-            {isEditing ? (
-              <Rating
-                name="rating"
-                value={rating}
-                classes={{ iconFilled: 'text-yellow-400' }}
-                onChange={(e, newValue) => setRating(newValue)}
-                precision={0.5}
+          ) : (
+            Array.from({ length: 5 }).map((_, index) => (
+              <FontAwesomeIcon
+                key={index}
+                icon={faStar}
+                className={`h-4 w-4 ${
+                  index < editedPlace.rating
+                    ? 'text-yellow-400'
+                    : 'text-gray-400'
+                }`}
               />
-            ) : (
-              rating.toFixed(1)
-            )}
+            ))
+          )}
+          <p className="text-yellow-400 font-semibold ml-2">
+            {isEditing ? null : editedPlace.rating.toFixed(1)}
           </p>
         </div>
-        <p className="text-gray-400">
+        <p
+          onClick={!isEditing ? toggleEditing : undefined}
+          className={`text-gray-400 cursor-pointer ${
+            isEditing ? 'border-b-2 border-blue-500' : ''
+          }`}
+        >
           {isEditing ? (
             <textarea
               placeholder="Notes for next time"
-              value={reviews}
-              onChange={(e) => setReviews(e.target.value)}
+              value={editedPlace.reviews}
+              onChange={(e) => handleInputChange('reviews', e.target.value)}
               className="w-full p-2 border rounded-md mb-4 resize-none focus:outline-none focus:ring focus:ring-blue-500 bg-gray-800 text-white text-center"
               rows="4"
             />
           ) : (
-            reviews
+            editedPlace.reviews
           )}
         </p>
-
         {/* Categories */}
         <div className="flex flex-wrap justify-center mb-4">
-  {availableCategories.map((category) => (
-    <button
-      key={category._id}
-      className={`m-1 px-4 py-2 rounded-md ${
-        selectedCategories.includes(category._id)
-          ? 'bg-blue-500 text-white'
-          : 'bg-gray-800 text-white'
-      }`}
-      onClick={() => toggleCategory(category._id)}
-    >
-      {category.category}
-    </button>
-  ))}
-</div>
+          {(isEditing ? availableCategories : placeData.selectedCategories).map((category) => (
+            <button
+              key={category._id}
+              className={`m-1 px-4 py-2 rounded-md ${
+                isEditing
+                  ? editedPlace.selectedCategories.includes(category._id)
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-800 text-white'
+                  : 'bg-blue-500 text-white'
+              }`}
+              onClick={() => toggleCategory(category._id)}
+            >
+              {category.category}
+            </button>
+          ))}
+        </div>
         {isEditing ? (
-          <button
-            onClick={handleUpdatePlace}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-          >
-            Save
-          </button>
+          <div className="flex space-x-4">
+            <button
+              onClick={handleUpdatePlace}
+              className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            >
+              Save
+            </button>
+            <button
+              onClick={handleDeletePlace}
+              className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
+            >
+              Delete
+            </button>
+          </div>
         ) : null}
       </div>
     </Modal>
