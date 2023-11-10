@@ -20,7 +20,13 @@ const Places = () => {
   const [availableCategories, setAvailableCategories] = useState([]);
 
   useEffect(() => {
-    fetch(import.meta.env.VITE_API_URL + 'api/places')
+    fetch(import.meta.env.VITE_API_URL + 'api/places', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         console.log("RESPONSE FROM DB", data);
@@ -51,7 +57,13 @@ const Places = () => {
         setCategories(allCategories);
       });
 
-      fetch(import.meta.env.VITE_API_URL + 'api/categories/')
+      fetch(import.meta.env.VITE_API_URL + 'api/categories/' , {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
       .then((res) => res.json())
       .then((data) => {
         console.log(data)
@@ -76,6 +88,7 @@ const Places = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify(newPlace),
       })
@@ -93,6 +106,7 @@ const Places = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify(updatedPlace),
       })
@@ -127,6 +141,11 @@ const Places = () => {
       // console.log("PLACE DATA: ", place)
       fetch(import.meta.env.VITE_API_URL  + `api/places/${place._id}`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+
       })
         .then((res) => res.json())
         .then(() => {
