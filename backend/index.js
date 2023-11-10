@@ -14,6 +14,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
+app.options('*', cors());
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URL , {
   useNewUrlParser: true,
