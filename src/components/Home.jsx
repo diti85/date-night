@@ -13,7 +13,7 @@ const Home = () => {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { delay: 0.5 } }
   };
-  const { authenticated, login } = useContext(AuthContext);
+  const { authenticated, login  } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -39,7 +39,7 @@ const Home = () => {
     <div className="bg-gray-900 min-h-screen flex flex-col justify-center items-center margin">
         <div className="max-w-md mx-auto px-4 flex flex-col justify-center items-center">
       <motion.img
-        src="src/assets/rose.png"
+        src="/assets/rose.png"
         alt="Rose"
         className="w-80 mb-8"
         initial={{ opacity: 0, y: -50 }}
