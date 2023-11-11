@@ -51,7 +51,7 @@ const Home = () => {
         animate="visible"
         variants={variants}
       >
-        Hola mi amor!
+        Hola Dondi!
       </motion.h1>
       <motion.p
         className="text-white text-lg mb-8 text-center"
