@@ -16,6 +16,7 @@ sudo npm install
 
 echo "Build your app"
 sudo npm run build
+sudo cp -R dist/ /var/www/html/datenight/
 
 echo "Run new PM2 action"
 sudo cp /home/ubuntu/eccosystem.json eccosystem.json
