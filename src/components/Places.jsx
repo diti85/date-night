@@ -40,21 +40,8 @@ const Places = () => {
         }));
 
         setPlaces(placesWithArrayCategories);
-        setFilteredPlaces(placesWithArrayCategories);
+        setFilteredPlaces(placesWithArrayCategories); 
 
-        // Extract unique categories
-        const allCategories = placesWithArrayCategories.reduce(
-          (acc, place) => {
-            place.selectedCategories.forEach((category) => {
-              if (!acc.includes(category)) {
-                acc.push(category);
-              }
-            });
-            return acc;
-          },
-          []
-        );
-        setCategories(allCategories);
       });
 
       fetch(import.meta.env.VITE_API_URL + 'api/categories/' , {
@@ -67,6 +54,8 @@ const Places = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data)
+        //loop thru the array and set the categories
+        setCategories(data);
         setAvailableCategories(data);
       })
       .catch((err) => console.log(err));
@@ -202,14 +191,14 @@ const Places = () => {
             onClose={handleModalClose}
             onSuccess={handleAddPlace}
           />
-          <div className="flex mb-4">
+          <div className="flex flex-wrap mb-4 w-full flex-wrap justify-center align-center">
             <button
               onClick={() => handleCategoryFilter('All')}
               className={`${
                 selectedCategories.includes('All')
                   ? 'bg-red-500 text-white'
                   : 'bg-gray-700 text-gray-300'
-              } py-1 px-4 rounded-full text-lg mr-4`}
+              } py-2 px-6 rounded-full text-sm md:text-lg mr-2 mb-2 md:mb-0`}
             >
               All
             </button>
@@ -222,7 +211,7 @@ const Places = () => {
                   selectedCategories.includes(category.category)
                     ? 'bg-red-500 text-white'
                     : 'bg-gray-700 text-gray-300'
-                } py-1 px-4 rounded-full text-lg mr-4`}
+                } py-2 px-4 md:px-6 rounded-full text-sm md:text-lg mr-2 mb-2 md:mb-0`}
               >
                 {category.category}
               </button>
