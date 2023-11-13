@@ -101,7 +101,7 @@ const Places = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log("DATA FROM UPDATE", data)
+          // console.log("DATA FROM UPDATE", data)
           // Update the place in the state
           const updatedPlaces = places.map((place) =>
             place._id === data._id ? data : place
@@ -175,14 +175,14 @@ const Places = () => {
     return (
       <div>
         <Navbar />
-        <div className="bg-gray-900 min-h-screen flex flex-col justify-center items-center ">
-          <div className="flex flex-col items-center">
+        <div className="bg-gray-900 min-h-screen flex flex-col justify-center items-center p-4">
+          <div className="flex flex-col items-center mb-8">
             <h1 className="text-4xl text-red-500 font-semibold mb-4">
               Our Favorite Places
             </h1>
             <button
               onClick={handleModalOpen}
-              className="bg-red-500 text-white py-2 px-6 rounded-full text-lg hover:bg-red-600 mb-4"
+              className="bg-red-500 text-white py-2 px-6 rounded-full text-lg hover:bg-red-600"
             >
               Add New Place
             </button>
@@ -192,7 +192,7 @@ const Places = () => {
             onClose={handleModalClose}
             onSuccess={handleAddPlace}
           />
-          <div className="flex flex-wrap mb-4 w-full flex-wrap justify-center align-center">
+          <div className="flex flex-wrap mb-4 p-8 w-full justify-center">
             <button
               onClick={() => handleCategoryFilter('All')}
               className={`${
@@ -218,7 +218,7 @@ const Places = () => {
               </button>
             ))}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-8 flex justify-center ">
             {filteredPlaces.map((place, index) => (
               <Place
                 key={index}
@@ -246,6 +246,5 @@ const Places = () => {
       </div>
     );
   };
-  
 
   export default Places;
