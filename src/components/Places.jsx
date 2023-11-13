@@ -101,15 +101,16 @@ const Places = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          const updatedPlaces = places.map((place) => {
-            if (place.id === data.id) {
-              return data;
-            } else {
-              return place;
-            }
-          });
+          console.log("DATA FROM UPDATE", data)
+          // Update the place in the state
+          const updatedPlaces = places.map((place) =>
+            place._id === data._id ? data : place
+          );
           setPlaces(updatedPlaces);
           setFilteredPlaces(updatedPlaces);
+          // Close the PlaceModal after updating
+          closePlaceModal();
+
         });
     };
 

@@ -7,6 +7,7 @@ const VerificationModal = ({ isOpen, onClose, onSuccess }) => {
   const handleVerify = () => {
     // Implement your verification logic here
     // For example, you can check if the entered code matches a predefined code
+    console.log("verificationCode:", verificationCode,"// import.meta.env.VITE_CODE:", import.meta.env.VITE_CODE)
     if (verificationCode === import.meta.env.VITE_CODE) {
       onSuccess();
       onClose();
