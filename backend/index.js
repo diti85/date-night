@@ -7,6 +7,28 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+// import packages
+const https = require('https');
+const fs = require('fs');
+
+// serve the API with signed certificate on 443 (SSL/HTTPS) port
+const httpsServer = https.createServer({
+  key: fs.readFileSync('/etc/letsencrypt/live/nochedecita.me/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/nochedecita.me/fullchain.pem'),
+}, app);
+
+httpsServer.listen(443, () => {
+    console.log('HTTPS Server running on port 443');
+});
+
+const http = require('http');
+
+// serve the API on 80 (HTTP) port
+const httpServer = http.createServer(app);
+
+httpServer.listen(80, () => {
+    console.log('HTTP Server running on port 80');
+});
 
 // Middleware
 app.use(cors({
