@@ -132,7 +132,5 @@ app.get('/api/categories', async (req, res) => {
 );
 
 // Start the server
-app.listen(PORT_HTTP, () => console.log(`Server running on port ${PORT_HTTP}`));
-
 
 
