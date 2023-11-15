@@ -14,11 +14,6 @@ const PORT_HTTPS = process.env.PORT_HTTPS || 8443;
 
 // Middleware
 app.use(cors({ origin: '*' }));
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://nochedecita.com');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
 app.use(express.json());
 
 
