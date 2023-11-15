@@ -1,46 +1,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const https = require('https');
+const http = require('http');
+const fs = require('fs');
 const Place = require('./models/places');
-//dotenv
+
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-// import packages
-const https = require('https');
-const fs = require('fs');
-
-// serve the API with signed certificate on 443 (SSL/HTTPS) port
-const httpsServer = https.createServer({
-  key: fs.readFileSync('/home/ubuntu/actions-runner/privkey.pem'),
-  cert: fs.readFileSync('/home/ubuntu/actions-runner/fullchain.pem'),
-}, app);
-
-httpsServer.listen(8443, () => {
-  console.log('HTTPS Server running on port 8443');
-});
-
-
-const http = require('http');
-
-// serve the API on 80 (HTTP) port
-const httpServer = http.createServer(app);
-
-httpServer.listen(80, () => {
-    console.log('HTTP Server running on port 80');
-});
+const PORT_HTTP = process.env.PORT_HTTP || 8080;
+const PORT_HTTPS = process.env.PORT_HTTPS || 8443;
 
 // Middleware
-app.use(cors({
-  origin: '*', // Replace '*' with your frontend's URL in production
-}));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-app.options('*', cors());
-
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URL , {
+mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -49,6 +26,23 @@ db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to MongoDB'));
 
 
+
+// HTTPS Server
+const httpsOptions = {
+  key: fs.readFileSync('/home/ubuntu/actions-runner/privkey.pem'),
+  cert: fs.readFileSync('/home/ubuntu/actions-runner/fullchain.pem'),
+};
+
+const httpsServer = https.createServer(httpsOptions, app);
+httpsServer.listen(PORT_HTTPS, () => {
+  console.log(`HTTPS Server running on port ${PORT_HTTPS}`);
+});
+
+// HTTP Server
+const httpServer = http.createServer(app);
+httpServer.listen(PORT_HTTP, () => {
+  console.log(`HTTP Server running on port ${PORT_HTTP}`);
+});
 
 
 // API Routes
