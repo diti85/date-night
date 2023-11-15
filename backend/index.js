@@ -9,8 +9,8 @@ const Place = require('./models/places');
 require('dotenv').config();
 
 const app = express();
-const PORT_HTTP = process.env.PORT_HTTP || 8081;
-const PORT_HTTPS = process.env.PORT_HTTPS || 8443;
+const PORT_HTTP = process.env.PORT_HTTP || 5000;
+const PORT_HTTPS = process.env.PORT_HTTPS || 443;
 
 // Middleware
 app.use(cors({ origin: '*' }));
