@@ -10,7 +10,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT_HTTP = process.env.PORT_HTTP || 5000;
-const PORT_HTTPS = process.env.PORT_HTTPS || 443;
+const PORT_HTTPS = process.env.PORT_HTTPS || 8443;
 
 // Middleware
 app.use(cors({ origin: '*' }));
