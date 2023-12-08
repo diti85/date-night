@@ -1,8 +1,21 @@
-# React + Vite
+# Date Night
+A personalized date night app I made for my girlfriend as a side project that solves the ”what to eat” dilemma with
+a fun and user-friendly way that allows my partner and I to effortlessly catalog places and restaurants we visit.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+## Local run instructionsy
+Clone the repo and cd into it.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Run the following commands in the root directory
+
+``` npm ci ```
+``` npm run dev```
+
+This will startup the react project which runs the frontend.
+
+1. Open another temrinal and cd into the backend by running ```cd backend```
+1. Run the following commands in the backend directory:
+
+``` npm ci ```
+``` node index ```
+
