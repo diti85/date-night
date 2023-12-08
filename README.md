@@ -3,6 +3,7 @@ A personalized date night app I made for my girlfriend as a side project that so
 a fun and user-friendly way that allows my partner and I to effortlessly catalog places and restaurants we visit.
 
 This app has been built with a MERN stack utilizing React for the frontend and Express for the backend.
+<img width="1710" alt="image" src="https://github.com/diti85/date-night/assets/101580207/a2dc43dc-aee8-41b1-9dd8-bc163326f4da">
 
 ## Local run instructions
 Clone the repo and cd into it.
