@@ -9,7 +9,7 @@ const Place = require('./models/places');
 require('dotenv').config();
 
 const app = express();
-const PORT_HTTP = process.env.PORT_HTTP || 5000;
+const PORT_HTTP = process.env.PORT_HTTP || 5001;
 const PORT_HTTPS = process.env.PORT_HTTPS || 8443;
 
 // Middleware
@@ -30,15 +30,15 @@ db.once('open', () => console.log('Connected to MongoDB'));
 
 
 // HTTPS Server
-const httpsOptions = {
-  key: fs.readFileSync('/home/ubuntu/actions-runner/privkey.pem'),
-  cert: fs.readFileSync('/home/ubuntu/actions-runner/fullchain.pem'),
-};
+// const httpsOptions = {
+//   key: fs.readFileSync('/home/ubuntu/actions-runner/privkey.pem'),
+//   cert: fs.readFileSync('/home/ubuntu/actions-runner/fullchain.pem'),
+// };
 
-const httpsServer = https.createServer(httpsOptions, app);
-httpsServer.listen(PORT_HTTPS, () => {
-  console.log(`HTTPS Server running on port ${PORT_HTTPS}`);
-});
+// const httpsServer = https.createServer(httpsOptions, app);
+// httpsServer.listen(PORT_HTTPS, () => {
+//   console.log(`HTTPS Server running on port ${PORT_HTTPS}`);
+// });
 
 // HTTP Server
 const httpServer = http.createServer(app);
@@ -119,20 +119,50 @@ app.put('/api/places/:id', async (req, res) => {
 });
 
 app.post('/api/categories/add', async (req, res) => {
+  try{
   let collection = await db.collection("categories");
   let category = req.body;
   let result = await collection.insertOne(category);
   res.send(result).status(201);
+  }
+  catch(error){
+    res.status(500).json({ error: 'Error creating category' });
+  }
 }
 );
 
 app.get('/api/categories', async (req, res) => {
+  try{
   let collection = await db.collection("categories");
   let result = await collection.find().toArray();
   res.send(result).status(200);
+  }
+  catch(error){
+    res.status(500).json({ error: 'Error fetching categories' });
+  }
 }
 );
 
-// Start the server
+app.delete('/api/categories/:id', async (req, res) => {
+  try{
+    let collection = await db.collection("categories");
+    let result = await collection.deleteOne({ _id: ObjectId(req.params.id) });
+    res.send(result).status(200);
+  }
+  catch(error){
+    res.status(500).json({ error: 'Error deleting category' });
+  }
+}
+);
 
-
+app.put('/api/categories/:id', async (req, res) => {
+  try{
+  let collection = await db.collection("categories");
+  let result = await collection.updateOne({ _id: ObjectId(req.params.id) }, { $set: req.body });
+  res.send(result).status(200);
+  }
+  catch(error){
+    res.status(500).json({ error: 'Error updating category' });
+  }
+}
+);
