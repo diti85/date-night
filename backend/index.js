@@ -27,18 +27,16 @@ const db = mongoose.connection;
 db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to MongoDB'));
 
-
-
 // HTTPS Server
-// const httpsOptions = {
-//   key: fs.readFileSync('/home/ubuntu/actions-runner/privkey.pem'),
-//   cert: fs.readFileSync('/home/ubuntu/actions-runner/fullchain.pem'),
-// };
+const httpsOptions = {
+  key: fs.readFileSync('/home/ubuntu/actions-runner/privkey.pem'),
+  cert: fs.readFileSync('/home/ubuntu/actions-runner/fullchain.pem'),
+};
 
-// const httpsServer = https.createServer(httpsOptions, app);
-// httpsServer.listen(PORT_HTTPS, () => {
-//   console.log(`HTTPS Server running on port ${PORT_HTTPS}`);
-// });
+const httpsServer = https.createServer(httpsOptions, app);
+httpsServer.listen(PORT_HTTPS, () => {
+  console.log(`HTTPS Server running on port ${PORT_HTTPS}`);
+});
 
 // HTTP Server
 const httpServer = http.createServer(app);
@@ -166,3 +164,30 @@ app.put('/api/categories/:id', async (req, res) => {
   }
 }
 );
+
+app.put('/api/date', async (req, res) => {
+  try{
+    //read the date from the request
+    let currentDate = req.body.date;
+    fs.writeFileSync('date.txt', currentDate);
+    //send the date to the frontend
+    res.send(currentDate).status(200);
+  }
+  catch(error){
+    res.status(500).json({ error: 'Error creating date night' });
+  }
+}
+);
+
+app.get('/api/date'), async (req, res) => {
+  try{
+    // read the date from the file
+    // let currentDate = fs.readFileSync('date.txt', 'utf8');
+    //send the date to the frontend
+    //send test success message
+    res.send("Date read successfully").status(200);
+  }
+  catch(error){
+    res.status(500).json({ error: 'Error updating date night' });
+  }
+}

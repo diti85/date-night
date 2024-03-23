@@ -3,6 +3,12 @@ import Navbar from './Navbar';
 import Place from './Place';
 import AddNewPlaceModal from './AddNewPlaceModal';
 import PlaceModal from './PlaceModal';
+import Countdown from './Countdown';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+// ...
+
 const Places = () => {
   //this variable holds the places that get loaded on page load
   const [places, setPlaces] = useState([]);
@@ -18,6 +24,9 @@ const Places = () => {
   const [isPlaceModalOpen, setIsPlaceModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [availableCategories, setAvailableCategories] = useState([]);
+  const [nextDateNight, setNextDateNight] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API_URL + 'api/places', {
@@ -29,7 +38,7 @@ const Places = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("RESPONSE FROM DB", data);
+        // console.log("RESPONSE FROM DB", data);
 
         // Ensure that selectedCategories is always an array
         const placesWithArrayCategories = data.map((place) => ({
@@ -44,7 +53,7 @@ const Places = () => {
 
       });
 
-      fetch(import.meta.env.VITE_API_URL + 'api/categories/' , {
+    fetch(import.meta.env.VITE_API_URL + 'api/categories/' , {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -59,6 +68,27 @@ const Places = () => {
         setAvailableCategories(data);
       })
       .catch((err) => console.log(err));
+
+    fetch(import.meta.env.VITE_API_URL + 'api/date', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(
+          'RESPONSE FROM DB FOR DATE NIGHT',
+          data
+        )
+        setNextDateNight(data);
+        setSelectedDate(new Date(data));
+      })
+      .catch((error) => {
+        console.error('Error fetching date night:', error);
+      });
+
   }, []);
 
 
@@ -172,20 +202,46 @@ const Places = () => {
       acc[place.category].push(place);
       return acc;
     }, {});
+
+    const handleDateChange = (date) => {
+      fetch(import.meta.env.VITE_API_URL + 'api/date', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({ date: selectedDate }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setNextDateNight(data.nextDateNight);
+        })
+        .catch((error) => {
+          console.error('Error updating date night:', error);
+        });
+      setSelectedDate(date);
+    };
+    
     return (
       <div>
         <Navbar />
         <div className="bg-gray-900 min-h-screen flex flex-col justify-center items-center p-4">
+          <Countdown date={selectedDate} />
+          <div className="mt-4">
+            <div className="flex">
+              <DatePicker
+                selected={selectedDate}
+                onChange={handleDateChange}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Update next date night"
+                className="mr-2 mb-10 p-2 rounded-lg bg-gray-800 text-gray-300"
+              />
+            </div>
+          </div>
           <div className="flex flex-col items-center mb-8">
-            <h1 className="text-4xl text-red-500 font-semibold mb-4">
+            <h1 className="text-4xl text-red-500 font-semibold mb-0">
               Our Favorite Places
             </h1>
-            <button
-              onClick={handleModalOpen}
-              className="bg-red-500 text-white py-2 px-6 rounded-full text-lg hover:bg-red-600"
-            >
-              Add New Place
-            </button>
           </div>
           <AddNewPlaceModal
             isOpen={isModalOpen}
@@ -212,12 +268,18 @@ const Places = () => {
                   selectedCategories.includes(category.category)
                     ? 'bg-red-500 text-white'
                     : 'bg-gray-700 text-gray-300'
-                } py-2 px-4 md:px-6 rounded-full text-sm md:text-lg mr-2 mb-2 md:mb-0`}
+                } py-4 px-4 md:px-6 rounded-full text-sm md:text-lg mr-2 mb-2 md:mb-0`}
               >
                 {category.category}
               </button>
             ))}
           </div>
+          <button
+              onClick={handleModalOpen}
+              className="bg-red-500 text-white py-2 px-6 rounded-full text-lg hover:bg-red-600"
+            >
+              Add New Place
+            </button>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-8 flex justify-center ">
             {filteredPlaces.map((place, index) => (
               <Place
@@ -246,5 +308,7 @@ const Places = () => {
       </div>
     );
   };
+
+
 
   export default Places;
