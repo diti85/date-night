@@ -27,16 +27,16 @@ const db = mongoose.connection;
 db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to MongoDB'));
 
-// HTTPS Server
-const httpsOptions = {
-  key: fs.readFileSync('/home/ubuntu/actions-runner/privkey.pem'),
-  cert: fs.readFileSync('/home/ubuntu/actions-runner/fullchain.pem'),
-};
+// // HTTPS Server
+// const httpsOptions = {
+//   key: fs.readFileSync('/home/ubuntu/actions-runner/privkey.pem'),
+//   cert: fs.readFileSync('/home/ubuntu/actions-runner/fullchain.pem'),
+// };
 
-const httpsServer = https.createServer(httpsOptions, app);
-httpsServer.listen(PORT_HTTPS, () => {
-  console.log(`HTTPS Server running on port ${PORT_HTTPS}`);
-});
+// const httpsServer = https.createServer(httpsOptions, app);
+// httpsServer.listen(PORT_HTTPS, () => {
+//   console.log(`HTTPS Server running on port ${PORT_HTTPS}`);
+// });
 
 // HTTP Server
 const httpServer = http.createServer(app);
