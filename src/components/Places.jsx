@@ -78,12 +78,11 @@ const Places = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(
-          'RESPONSE FROM DB FOR DATE NIGHT',
-          data
-        )
-        setNextDateNight(data);
-        setSelectedDate(new Date(data));
+        console.log('RESPONSE FROM DB FOR DATE NIGHT', data);
+        console.log("DATE", new Date())
+        const date = new Date(data.date);
+        setNextDateNight(date);
+        setSelectedDate(date);
       })
       .catch((error) => {
         console.error('Error fetching date night:', error);
@@ -222,6 +221,37 @@ const Places = () => {
       setSelectedDate(date);
     };
     
+    const handleSaveDate = () => {
+      //check if selected date is not null
+      if (selectedDate === null) {
+        //display error message
+        alert('Please select a date');
+        return;
+      }
+      // if selected date is in the past, display error message
+      if (selectedDate < new Date()) {
+        alert('Please select a future date');
+        return;
+      }
+      // Make API call to update the next date night
+      console.log("selectedDate", selectedDate.toLocaleDateString())
+      fetch(import.meta.env.VITE_API_URL + 'api/date', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({ date: selectedDate }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setNextDateNight(data.nextDateNight);
+          console.log("DATA FROM UPDATE", data)
+        })
+        .catch((error) => {
+          console.error('Error updating date night:', error);
+        });
+    }
     return (
       <div>
         <Navbar />
@@ -236,6 +266,12 @@ const Places = () => {
                 placeholderText="Update next date night"
                 className="mr-2 mb-10 p-2 rounded-lg bg-gray-800 text-gray-300"
               />
+              <button
+                onClick={handleSaveDate}
+                className="bg-red-500 text-white py-1 px-2 rounded-full text-s hover:bg-red-600 mb-10"
+              >
+                Save Date
+              </button>
             </div>
           </div>
           <div className="flex flex-col items-center mb-8">

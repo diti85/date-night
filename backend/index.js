@@ -46,6 +46,8 @@ httpServer.listen(PORT_HTTP, () => {
 
 
 // API Routes
+app.get('/api/health-check', (req, res) => res.sendStatus(200));
+
 app.get('/api/places', async (req, res) => {
   try {
     const places = await Place.find();
@@ -54,6 +56,17 @@ app.get('/api/places', async (req, res) => {
     res.status(500).json({ error: 'Error fetching places' });
   }
 });
+
+app.get('/api/date', async (req, res) => {
+  try {
+    let collection = await db.collection("date");
+    let result = await collection.find().toArray()
+    res.send(result[0]).status(200);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching date night' });
+  }
+}
+);
 
 app.post('/api/places', async (req, res) => {
   const data = req.body;
@@ -162,32 +175,19 @@ app.put('/api/categories/:id', async (req, res) => {
   catch(error){
     res.status(500).json({ error: 'Error updating category' });
   }
-}
-);
+});
 
 app.put('/api/date', async (req, res) => {
   try{
-    //read the date from the request
-    let currentDate = req.body.date;
-    fs.writeFileSync('date.txt', currentDate);
-    //send the date to the frontend
-    res.send(currentDate).status(200);
+    let collection = await db.collection("date");
+    let result = await collection.findOneAndUpdate({}, { $set: req.body });
+    res.send(result).status(200);
   }
   catch(error){
-    res.status(500).json({ error: 'Error creating date night' });
+    console.log(error)
+    res.status(500).json({ message: 'Error updating date night'});
   }
 }
 );
 
-app.get('/api/date'), async (req, res) => {
-  try{
-    // read the date from the file
-    // let currentDate = fs.readFileSync('date.txt', 'utf8');
-    //send the date to the frontend
-    //send test success message
-    res.send("Date read successfully").status(200);
-  }
-  catch(error){
-    res.status(500).json({ error: 'Error updating date night' });
-  }
-}
+
