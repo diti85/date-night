@@ -26,7 +26,7 @@ const Places = () => {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [availableCategories, setAvailableCategories] = useState([]);
   const [nextDateNight, setNextDateNight] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API_URL + 'api/places', {
@@ -80,6 +80,7 @@ const Places = () => {
       .then((data) => {
         console.log('DATA STORED IN DB', data.date);
         setNextDateNight(new Date(data.date));
+        setSelectedDate(new Date(data.date));
       })
       .catch((error) => {
         console.error('Error fetching date night:', error);
@@ -201,6 +202,7 @@ const Places = () => {
 
     
     const handleSaveDate = (date) => {
+      console.log("DATE", date);
       setSelectedDate(date);
       //check if selected date is not null
       if (selectedDate === null) {

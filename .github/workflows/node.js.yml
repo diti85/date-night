@@ -34,4 +34,5 @@ jobs:
       run: |
         cd backend
         npm ci
-        sudo pm2 restart all
+        sudo pm2 stop all
+        sudo pm2 start index.js
