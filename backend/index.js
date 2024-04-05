@@ -181,7 +181,9 @@ app.put('/api/date', async (req, res) => {
   try{
     let collection = await db.collection("date");
     let result = await collection.findOneAndUpdate({}, { $set: req.body });
-    res.send(result).status(200);
+    // send the new date night back to the client
+    let updatedDate = await collection.find().toArray();
+    res.send(updatedDate).status(200);
   }
   catch(error){
     console.log(error)

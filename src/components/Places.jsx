@@ -201,9 +201,10 @@ const Places = () => {
     }, {});
 
     
-    const handleSaveDate = (date) => {
-      console.log("DATE", date);
+    const handleSaveDate = (input) => {
+      let date = new Date(input);
       setSelectedDate(date);
+      console.log("SELECTED DATE", selectedDate)
       //check if selected date is not null
       if (selectedDate === null) {
         //display error message
@@ -241,15 +242,11 @@ const Places = () => {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateTimePicker 
                 className="text-white"
+                onChange={(date) => setSelectedDate(date.toDate())}
                 onAccept={(date) => handleSaveDate(date.toDate())}
+                renderInput={(props) => <input {...props} />}
                 />
           </LocalizationProvider>
-              <button
-                onClick={handleSaveDate}
-                className="bg-red-500 text-white py-1 px-2 rounded-full text-s hover:bg-red-600 mb-10 mt-5"
-              >
-                Save Date
-              </button>
           <div className="flex flex-col items-center mb-8">
             <h1 className="text-4xl text-red-500 font-semibold mb-0">
               Our Favorite Places
