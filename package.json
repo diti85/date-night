@@ -16,7 +16,10 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/material": "^5.14.3",
+    "@mui/x-date-pickers": "^7.1.0",
     "datepicker": "^0.0.0",
+    "datetime-picker": "^0.6.0",
+    "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "fontawesome": "^5.6.3",
     "framer-motion": "^10.15.0",
@@ -24,9 +27,11 @@
     "match-sorter": "^6.3.1",
     "react": "^18.2.0",
     "react-datepicker": "^4.25.0",
+    "react-datetime-picker": "^5.6.0",
     "react-dom": "^18.2.0",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.14.2",
+    "react-time-picker": "^6.6.0",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {

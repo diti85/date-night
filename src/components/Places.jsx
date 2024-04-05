@@ -4,9 +4,10 @@ import Place from './Place';
 import AddNewPlaceModal from './AddNewPlaceModal';
 import PlaceModal from './PlaceModal';
 import Countdown from './Countdown';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 // ...
 
 const Places = () => {
@@ -25,8 +26,7 @@ const Places = () => {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [availableCategories, setAvailableCategories] = useState([]);
   const [nextDateNight, setNextDateNight] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null);
-
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     fetch(import.meta.env.VITE_API_URL + 'api/places', {
@@ -78,11 +78,8 @@ const Places = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log('RESPONSE FROM DB FOR DATE NIGHT', data);
-        console.log("DATE", new Date())
-        const date = new Date(data.date);
-        setNextDateNight(date);
-        setSelectedDate(date);
+        console.log('DATA STORED IN DB', data.date);
+        setNextDateNight(new Date(data.date));
       })
       .catch((error) => {
         console.error('Error fetching date night:', error);
@@ -202,26 +199,9 @@ const Places = () => {
       return acc;
     }, {});
 
-    const handleDateChange = (date) => {
-      fetch(import.meta.env.VITE_API_URL + 'api/date', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({ date: selectedDate }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setNextDateNight(data.nextDateNight);
-        })
-        .catch((error) => {
-          console.error('Error updating date night:', error);
-        });
-      setSelectedDate(date);
-    };
     
-    const handleSaveDate = () => {
+    const handleSaveDate = (date) => {
+      setSelectedDate(date);
       //check if selected date is not null
       if (selectedDate === null) {
         //display error message
@@ -234,7 +214,6 @@ const Places = () => {
         return;
       }
       // Make API call to update the next date night
-      console.log("selectedDate", selectedDate.toLocaleDateString())
       fetch(import.meta.env.VITE_API_URL + 'api/date', {
         method: 'PUT',
         headers: {
@@ -257,23 +236,18 @@ const Places = () => {
         <Navbar />
         <div className="bg-gray-900 min-h-screen flex flex-col justify-center items-center p-4">
           <Countdown date={selectedDate} />
-          <div className="mt-4">
-            <div className="flex">
-              <DatePicker
-                selected={selectedDate}
-                onChange={handleDateChange}
-                dateFormat="yyyy-MM-dd"
-                placeholderText="Update next date night"
-                className="mr-2 mb-10 p-2 rounded-lg bg-gray-800 text-gray-300"
-              />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateTimePicker 
+                className="text-white"
+                onAccept={(date) => handleSaveDate(date.toDate())}
+                />
+          </LocalizationProvider>
               <button
                 onClick={handleSaveDate}
-                className="bg-red-500 text-white py-1 px-2 rounded-full text-s hover:bg-red-600 mb-10"
+                className="bg-red-500 text-white py-1 px-2 rounded-full text-s hover:bg-red-600 mb-10 mt-5"
               >
                 Save Date
               </button>
-            </div>
-          </div>
           <div className="flex flex-col items-center mb-8">
             <h1 className="text-4xl text-red-500 font-semibold mb-0">
               Our Favorite Places
