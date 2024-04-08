@@ -1,3 +1,5 @@
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import React, { useEffect, useState } from 'react';
 
 
@@ -60,6 +62,16 @@ const Countdown = ({ date }) => {
                         <div className="text-xl font-bold text-gray-300">Seconds</div>
                     </div>
                 </div>
+            </div>
+            <div className="text-center mt-6">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateTimePicker 
+                enableAccessibleFieldDOMStructure
+                onChange={(date) => handleSaveDate(date.toDate())}
+                onAccept={(date) => handleSaveDate(date.toDate())}
+                slotProps={{textField: {className: 'bg-gray-700 text-gray-300'}}}
+              />
+            </LocalizationProvider>
             </div>
         </div>
     );

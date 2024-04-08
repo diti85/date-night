@@ -8,6 +8,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+import { createTheme, textFieldClasses } from '@mui/material';
 // ...
 
 const Places = () => {
@@ -199,7 +200,7 @@ const Places = () => {
       acc[place.category].push(place);
       return acc;
     }, {});
-
+   
     
     const handleSaveDate = (input) => {
       let date = new Date(input);
@@ -239,15 +240,7 @@ const Places = () => {
         <Navbar />
         <div className="bg-gray-900 min-h-screen flex flex-col justify-center items-center p-4">
           <Countdown date={selectedDate} />
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker 
-                className="text-white"
-                onChange={(date) => setSelectedDate(date.toDate())}
-                onAccept={(date) => handleSaveDate(date.toDate())}
-                renderInput={(props) => <input {...props} />}
-                />
-          </LocalizationProvider>
-          <div className="flex flex-col items-center mb-8">
+          <div className="flex flex-col items-center mb-3 mt-8">
             <h1 className="text-4xl text-red-500 font-semibold mb-0">
               Our Favorite Places
             </h1>
